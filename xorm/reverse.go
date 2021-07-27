@@ -184,6 +184,7 @@ func runReverse(cmd *Command, args []string) {
 	os.MkdirAll(genDir, os.ModePerm)
 
 	supportComment = (args[0] == "mysql" || args[0] == "mymysql")
+	supportCommentGorm = (args[0] == "mysql" || args[0] == "mymysql")
 
 	Orm, err := xorm.NewEngine(args[0], args[1])
 	if err != nil {
