@@ -26,6 +26,8 @@ var (
 			"gt":         gtGorm,
 			"getCol":     getColGorm,
 			"UpperTitle": upTitle,
+			"Case2Camel": case2Camel,
+			"Uamel2Case": uamel2Case,
 		},
 		formatGoGorm,
 		genGoImportsGorm,

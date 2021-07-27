@@ -13,5 +13,10 @@ type {{Mapper .Name}} struct {
 {{range .ColumnsSeq}}{{$col := $table.GetColumn .}}	{{Mapper $col.Name}}	{{Type $col}} {{Tag $table $col}}
 {{end}}
 }
+
+func (m *{{Mapper .Name}}) TableName() string {
+	return "{{Uamel2Case (Mapper .Name)}}"
+}
+
 {{end}}
 
