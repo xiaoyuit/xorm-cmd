@@ -1,4 +1,4 @@
-lang=gogorm
+lang=go-gorm
 genJson=1
 prefix=cos_
 ignoreColumnsJSON=
