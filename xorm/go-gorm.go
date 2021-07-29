@@ -300,7 +300,11 @@ func tagGorm(table *core.Table, col *core.Column) string {
 
 	var tags []string
 	if len(res) > 0 {
-		tags = append(tags, "gorm:\"column:"+col.Name+";"+strings.Join(res, " ")+"\"")
+		var columnPrefixStr string = ""
+		if len(columnPrefix) == 2 && columnPrefix[1] > 0 && int64(len(table.Name)) >= (columnPrefix[0]+columnPrefix[1]) {
+			columnPrefixStr = table.Name[columnPrefix[0]:columnPrefix[0]+columnPrefix[1]] + "_"
+		}
+		tags = append(tags, "gorm:\"column:"+columnPrefixStr+col.Name+";"+strings.Join(res, " ")+"\"")
 	}
 	if genJson {
 		if includeGorm(ignoreColumnsJSON, col.Name) {

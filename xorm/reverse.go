@@ -52,6 +52,8 @@ func init() {
 
 var (
 	genJson                                      bool     = false
+	prefix                                       string   = ""
+	columnPrefix                                 []int64  = []int64{}
 	ignoreColumnsJSON, created, updated, deleted []string = []string{}, []string{"created_at"}, []string{"updated_at"}, []string{"deleted_at"}
 )
 
@@ -139,7 +141,7 @@ func runReverse(cmd *Command, args []string) {
 	var langTmpl LangTmpl
 	var ok bool
 	var lang string = "go"
-	var prefix string = "" //[SWH|+]
+	// var prefix string = "" //[SWH|+]
 
 	cfgPath := path.Join(dir, "config")
 	info, err := os.Stat(cfgPath)
@@ -152,7 +154,16 @@ func runReverse(cmd *Command, args []string) {
 		if j, ok := configs["genJson"]; ok {
 			genJson, err = strconv.ParseBool(j)
 		}
-
+		if j, ok := configs["columnPrefix"]; ok {
+			columnPrefixArr := strings.Split(j, ",")
+			if len(columnPrefixArr) == 2 {
+				start, startErr := strconv.ParseInt(columnPrefixArr[0], 10, 64)
+				end, endErr := strconv.ParseInt(columnPrefixArr[1], 10, 64)
+				if startErr == nil && endErr == nil {
+					columnPrefix = append(columnPrefix, start, end)
+				}
+			}
+		}
 		//[SWH|+]
 		if j, ok := configs["prefix"]; ok {
 			prefix = j

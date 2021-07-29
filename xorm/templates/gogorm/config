@@ -1,6 +1,7 @@
 lang=go-gorm
 genJson=1
 prefix=cos_
+columnPrefix=0,0
 ignoreColumnsJSON=
 created=
 updated=
