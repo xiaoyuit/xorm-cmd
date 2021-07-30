@@ -301,8 +301,12 @@ func tagGorm(table *core.Table, col *core.Column) string {
 	var tags []string
 	if len(res) > 0 {
 		var columnPrefixStr string = ""
-		if len(columnPrefix) == 2 && columnPrefix[1] > 0 && int64(len(table.Name)) >= (columnPrefix[0]+columnPrefix[1]) {
-			columnPrefixStr = table.Name[columnPrefix[0]:columnPrefix[0]+columnPrefix[1]] + "_"
+		if len(columnPrefix) == 2 && columnPrefix[1] > 0 {
+			if int64(len(table.Name)) >= (columnPrefix[0] + columnPrefix[1]) {
+				columnPrefixStr = table.Name[columnPrefix[0]:columnPrefix[0]+columnPrefix[1]] + "_"
+			} else {
+				columnPrefixStr = table.Name[0:len(table.Name)] + "_"
+			}
 		}
 		tags = append(tags, "gorm:\"column:"+columnPrefixStr+col.Name+";"+strings.Join(res, " ")+"\"")
 	}
