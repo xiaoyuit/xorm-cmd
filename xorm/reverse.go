@@ -123,7 +123,7 @@ func runReverse(cmd *Command, args []string) {
 			}
 		}
 	} else {
-		model = "models"
+		model = "model"
 		genDir = path.Join(curPath, model)
 	}
 
