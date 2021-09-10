@@ -216,7 +216,7 @@ func tagGorm(table *core.Table, col *core.Column) string {
 	if col.IsPrimaryKey {
 		res = append(res, "primaryKey")
 	}
-	if col.Default != "" {
+	if col.Default != "" && !includeGorm(created, col.Name) && !includeGorm(updated, col.Name) && !includeGorm(deleted, col.Name) {
 		// res = append(res, "default:"+col.Default)
 		res = append(res, fmt.Sprintf("default:%s", col.Default))
 	}
@@ -224,15 +224,15 @@ func tagGorm(table *core.Table, col *core.Column) string {
 		res = append(res, "autoIncrement")
 	}
 
-	if col.SQLType.IsTime() && includeGorm(created, col.Name) {
+	if (col.SQLType.IsTime() || col.SQLType.IsNumeric()) && includeGorm(created, col.Name) {
 		res = append(res, "autoCreateTime")
 	}
 
-	if col.SQLType.IsTime() && includeGorm(updated, col.Name) {
+	if (col.SQLType.IsTime() || col.SQLType.IsNumeric()) && includeGorm(updated, col.Name) {
 		res = append(res, "autoUpdateTime")
 	}
 
-	if col.SQLType.IsTime() && includeGorm(deleted, col.Name) {
+	if (col.SQLType.IsTime() || col.SQLType.IsNumeric()) && includeGorm(deleted, col.Name) {
 		res = append(res, "autoDeleteTime")
 	}
 
