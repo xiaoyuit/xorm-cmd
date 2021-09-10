@@ -216,10 +216,16 @@ func tagGorm(table *core.Table, col *core.Column) string {
 	if col.IsPrimaryKey {
 		res = append(res, "primaryKey")
 	}
-	if col.Default != "" && !includeGorm(created, col.Name) && !includeGorm(updated, col.Name) && !includeGorm(deleted, col.Name) {
-		// res = append(res, "default:"+col.Default)
-		res = append(res, fmt.Sprintf("default:%s", col.Default))
+	if col.Default != "" {
+		if !includeGorm(created, col.Name) && !includeGorm(updated, col.Name) && !includeGorm(deleted, col.Name) {
+			res = append(res, fmt.Sprintf("default:%s", col.Default))
+		}
+	} else {
+		if col.Nullable {
+			res = append(res, fmt.Sprintf("default:NULL"))
+		}
 	}
+
 	if col.IsAutoIncrement {
 		res = append(res, "autoIncrement")
 	}
