@@ -28,6 +28,7 @@ var (
 			"UpperTitle": upTitle,
 			"Case2Camel": case2Camel,
 			"Uamel2Case": uamel2Case,
+			"Annotation": annotation,
 		},
 		formatGoGorm,
 		genGoImportsGorm,
@@ -213,30 +214,31 @@ func tagGorm(table *core.Table, col *core.Column) string {
 		}
 	}
 	if col.IsPrimaryKey {
-		res = append(res, "pk")
+		res = append(res, "primaryKey")
 	}
 	if col.Default != "" {
-		res = append(res, "default "+col.Default)
+		// res = append(res, "default:"+col.Default)
+		res = append(res, fmt.Sprintf("default:%s", col.Default))
 	}
 	if col.IsAutoIncrement {
-		res = append(res, "autoincr")
+		res = append(res, "autoIncrement")
 	}
 
 	if col.SQLType.IsTime() && includeGorm(created, col.Name) {
-		res = append(res, "created")
+		res = append(res, "autoCreateTime")
 	}
 
 	if col.SQLType.IsTime() && includeGorm(updated, col.Name) {
-		res = append(res, "updated")
+		res = append(res, "autoUpdateTime")
 	}
 
 	if col.SQLType.IsTime() && includeGorm(deleted, col.Name) {
-		res = append(res, "deleted")
+		res = append(res, "autoDeleteTime")
 	}
 
-	if supportCommentGorm && col.Comment != "" {
-		res = append(res, fmt.Sprintf("comment('%s')", col.Comment))
-	}
+	// if supportCommentGorm && col.Comment != "" {
+	// 	res = append(res, fmt.Sprintf("comment:%s", col.Comment))
+	// }
 
 	names := make([]string, 0, len(col.Indexes))
 	for name := range col.Indexes {
@@ -253,7 +255,7 @@ func tagGorm(table *core.Table, col *core.Column) string {
 			uistr = "index"
 		}
 		if len(index.Cols) > 1 {
-			uistr += "(" + index.Name + ")"
+			uistr += ":" + index.Name
 		}
 		res = append(res, uistr)
 	}
@@ -296,7 +298,7 @@ func tagGorm(table *core.Table, col *core.Column) string {
 		nstr += strings.TrimLeft(opts, ",")
 		nstr += ")"
 	}
-	res = append(res, nstr)
+	res = append(res, "type:"+nstr)
 
 	var tags []string
 	if len(res) > 0 {
@@ -308,7 +310,7 @@ func tagGorm(table *core.Table, col *core.Column) string {
 				columnPrefixStr = table.Name[0:len(table.Name)] + "_"
 			}
 		}
-		tags = append(tags, "gorm:\"column:"+columnPrefixStr+col.Name+";"+strings.Join(res, " ")+"\"")
+		tags = append(tags, "gorm:\"column:"+columnPrefixStr+col.Name+";"+strings.Join(res, ";")+"\"")
 	}
 	if genJson {
 		if includeGorm(ignoreColumnsJSON, col.Name) {
@@ -319,6 +321,14 @@ func tagGorm(table *core.Table, col *core.Column) string {
 	}
 	if len(tags) > 0 {
 		return "`" + strings.Join(tags, " ") + "`"
+	} else {
+		return ""
+	}
+}
+
+func annotation(table *core.Table, col *core.Column) string {
+	if supportCommentGorm && col.Comment != "" {
+		return "// " + col.Comment
 	} else {
 		return ""
 	}
